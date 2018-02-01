@@ -13,22 +13,28 @@ namespace Practeece.GolfHoles
         [FunctionName("GetGolfHoles")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req, TraceWriter log)
         {
-            log.Info("C# HTTP trigger function processed a request.");
+            log.Info("Request for golf holes");
+
+            string[] skillLevels = {"beginner", "intermediate", "advanced"};
 
             // parse query parameter
-            string name = req.GetQueryNameValuePairs()
-                .FirstOrDefault(q => string.Compare(q.Key, "name", true) == 0)
+            string skillLevel = req.GetQueryNameValuePairs()
+                .FirstOrDefault(q => string.Compare(q.Key, "skillLevel", true) == 0)
                 .Value;
 
             // Get request body
             dynamic data = await req.Content.ReadAsAsync<object>();
 
             // Set name to query string or body data
-            name = name ?? data?.name;
+            skillLevel = skillLevel ?? data?.skillLevel;
 
-            return name == null
-                ? req.CreateResponse(HttpStatusCode.BadRequest, "Please pass a name on the query string or in the request body")
-                : req.CreateResponse(HttpStatusCode.OK, "Hello " + name);
+            if (skillLevel != null && skillLevels.Contains(skillLevel))
+            {
+                return req.CreateResponse(HttpStatusCode.OK, "Your skill level is " + skillLevel);
+            }
+
+            return req.CreateResponse(HttpStatusCode.BadRequest,
+                "Please pass a valid skill level on the query string or in the request body");
         }
     }
 }
