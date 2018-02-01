@@ -14,6 +14,22 @@ namespace Practeece.GolfHoles
         [FunctionName("GetGolfSwingResult")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req, TraceWriter log)
         {
+            // Sample body data
+            /* 
+                {
+                  "skillLevel": "advanced",
+                  "swingCount": 1,	
+                  "golfHole": {
+                    "holeId": 1,
+                    "distance": 510,
+                    "par": 5,
+                    "skill": "Advance",
+                    "hazard": "None",
+                    "averageSwingsToGreen": 4
+                  }
+                }             
+             */
+
             log.Info("A golf swing was made so return what the result is.");
 
             // Get request body
@@ -25,7 +41,7 @@ namespace Practeece.GolfHoles
                 return req.CreateResponse(HttpStatusCode.OK, $"Nice swing at {data.SkillLevel} level");
             }
 
-            return req.CreateResponse(HttpStatusCode.BadRequest, "Please pass a name on the query string or in the request body");
+            return req.CreateResponse(HttpStatusCode.BadRequest, "Please pass a valid golf swing data in the request body");
         }
     }
 }
